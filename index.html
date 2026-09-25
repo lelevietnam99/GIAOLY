@@ -192,12 +192,6 @@
         <h1>GIÁO LÝ</h1>
 
         <!-- BỘ ĐẾM LƯỢT XEM (Google Apps Script + Google Sheets) -->
-        <div class="view-counter">
-            <i class="fa-solid fa-eye"></i>
-            <span>Lượt xem: <b id="viewCount">0</b></span>
-            <span class="view-last" id="viewLast"></span>
-            <span class="view-mode" id="viewMode"></span>
-        </div>
 
         <div class="grid-container" id="links-wrapper">
             </div>
@@ -264,38 +258,6 @@
             }
 
             // ---- Chế mode TOÀN CỤC: gọi Google Apps Script ----
-            async function countGlobal() {
-                if (!APPS_SCRIPT_URL) {
-                    console.warn('[counter] APPS_SCRIPT_URL — rỗng, chuyển tự до Cục bộ.');
-                    return false;
-                }
-                try {
-                    const res = await fetch(APPS_SCRIPT_URL, {
-                        method: 'POST',
-                        cache: 'no-store',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: 'action=increment'
-                    });
-                    const text = await res.text(); // có thể là JSON hoặc HTML (Google trả trang yêu cầu quyền)
-                    let data = null;
-                    try { data = JSON.parse(text); } catch (e) { /* HTML, không phải JSON */ }
-                    if (data && data.ok) {
-                        show({ total: data.total, lastVisit: data.lastVisit }, 'global');
-                        console.log('[counter] ✅ TOÀN CỤC OK:', data);
-                        return true;
-                    }
-                    const isHtml = /<\s*(!doctype|html)/i.test(text.slice(0, 200));
-                    if (isHtml) {
-                        console.warn('[counter] ⚠️ Google trả về trang HTML (yêu cầu quyền HOẶC lỗi script ở Apps Script đang xảy ra). Hãy dán URL + "?action=read" vào cửa sổ ẩn danh để xem chi tiết — xem INSTRUCTIONS_APPS_SCRIPT.md.');
-                    } else {
-                        console.warn('[counter] ⚠️ Apps Script trả về dữ liệu không đúng:', data || text.slice(0, 300));
-                    }
-                    return false;
-                } catch (e) {
-                    console.warn('[counter] ⚠️ Không gọi được Apps Script (' + e + ') — thường do deployment chưa đặt "Ai có quyền truy cập: Bất kỳ ai (Anyone)" (CORS bị chặn) hoặc đang mở file local (file://). Hãy dán URL vào cửa sổ ẩn danh để kiểm tra — xem INSTRUCTIONS_APPS_SCRIPT.md mục Kiểm tra.');
-                    return false; // không gọi được -> dùng localStorage
-                }
-            }
 
             // ---- Chế mode CỤC BỰ (дỳ фоng, không cần internet) ----
             function countLocal() {
